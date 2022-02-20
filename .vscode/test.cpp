@@ -1,22 +1,59 @@
 #include <iostream>
-#include <string>
+#include <algorithm>
+#include <vector>
+#include <stack>
+#include <queue>
 
 using namespace std;
 
-class A {
-public:
-    virtual void show()=0;
-};
+vector<int> graph[1001];
+int visit[1001];
+int visit2[1001];
+queue<int> q;
 
-class B : public A{
-    virtual void show () { cout<< "B class";}
-};
+void Dfs(int start) {
+	if(visit[start]) {
+		return;
+	}
+	visit[start]=true;
+	cout<<start<<" ";
+	for(int i =0;i<graph[start].size();i++) {
+		int x = graph[start][i];
+		Dfs(x);
+	}
+}
+
+void Bfs(int start) {
+	visit2[start]=true;
+	q.push(start);
+	while(!q.empty()) {
+		int x = q.front();
+		q.pop();
+		cout<<x<<" ";
+		for(int i =0; i<graph[x].size();i++) {
+			int y = graph[x][i];
+			if(!visit2[y]) {
+				q.push(y);
+				visit2[y] = true;
+			}
+		}
+
+	}
+}
 
 int main() {
-    A* p;
-    B b;
-    p = &b; p->show(); //포인터 타입을 기준으로 함수를 호출하기 때문에 calss A의 함수를 불러옴
-    //이 문제를 해결하기 위해 가상함수 존재
-    //자식 클래스에서 함수를 재정의 할 수 있음 동적 바인딩을 통해 컴파일 시간에 객체를 특정할 수 있다.
-    return 0;
+	int n, m, v;
+	cin>>n>>m>>v;
+	for(int i =0;i<m;i++) {
+		int x, y; cin>>x>>y;
+		graph[x].push_back(y);
+		graph[y].push_back(x);
+	}
+	for(int i =1;i<=n;i++) {
+		sort(graph[i].begin(),graph[i].end());
+	}
+	Dfs(v);
+	cout<<"\n";
+	Bfs(v);
+	return 0;
 }
